@@ -11,8 +11,8 @@
 module.exports = {
   inn: require("./src/inn"),
   money: require("./src/money"),
-  // chartOfAccounts: require("./src/chartOfAccounts"),  // План счетов (94н)
-  // vat:             require("./src/vat"),              // НДС
-  // payroll:         require("./src/payroll"),          // НДФЛ + страховые взносы
-  // einvoice:        require("./src/einvoice"),         // УПД / e-invoice
+  vat: require("./src/vat"), // НДС (2026: base 22%)
+  payroll: require("./src/payroll"), // НДФЛ + страховые взносы (2026)
+  // chartOfAccounts: require("./src/chartOfAccounts"),  // План счетов (94н) — next
+  // einvoice:        require("./src/einvoice"),         // УПД / e-invoice — roadmap
 };

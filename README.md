@@ -26,9 +26,9 @@ the rate-driven engines are being built from sourced 2026 RF fiscal data.
 |--------|--------|
 | `inn.js` — ИНН (10/12), КПП, ОГРН, ОГРНИП, СНИЛС validation | ✅ shipped (checksums verified against real registry numbers) |
 | `money.js` — RUB/копейка round, format, parse | ✅ shipped |
+| `vat.js` — НДС (2026 rates: base **22%**, settlement math, УСН 5%/7%) | ✅ shipped |
+| `payroll.js` — НДФЛ 5-band progressive + страховые взносы (ЕПВБ/МСП, 2026) | ✅ shipped |
 | `chartOfAccounts.js` — План счетов (Приказ Минфина 94н) | ⏳ next (data sourced) |
-| `vat.js` — НДС (rates + declaration КНД 1151001) | ⏳ sourced, pending |
-| `payroll.js` — НДФЛ progressive scale + страховые взносы (2026) | ⏳ sourced, pending |
 | `einvoice.js` — УПД / electronic счёт-фактура | ⏳ roadmap |
 | `locale/ru.json` — Russian-only UI catalog | ⏳ lands with A1 Suite UI wiring |
 
