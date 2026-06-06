@@ -1,0 +1,34 @@
+{
+  "name": "a1-localization-ru",
+  "version": "0.1.0",
+  "description": "Russian (RF) localization + fiscal engines — ИНН/ОГРН identifiers, RUB money, chart of accounts (Приказ 94н), НДС, НДФЛ + страховые взносы payroll, e-invoice. Zero runtime dependencies.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test --test-concurrency=4 --test-timeout=60000"
+  },
+  "files": [
+    "index.js",
+    "src/",
+    "locale/"
+  ],
+  "keywords": [
+    "russia",
+    "russian",
+    "localization",
+    "l10n",
+    "fiscal",
+    "tax",
+    "nds",
+    "ndfl",
+    "inn",
+    "ogrn",
+    "rub",
+    "chart-of-accounts",
+    "rf"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}
