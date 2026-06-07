@@ -24,6 +24,12 @@ test("НДФЛ: non-resident flat 30%, no deductions", () => {
   assert.equal(ndflOnAnnualBase(1_000_000, { resident: false }), 300_000);
 });
 
+test("computeMonthlyPayroll: non-resident month ignores standard deductions", () => {
+  const r = computeMonthlyPayroll({ monthGross: 100_000, monthDeduction: 10_000, resident: false });
+  assert.equal(r.ndfl, 30_000);
+  assert.equal(r.net, 70_000);
+});
+
 test("НДФЛ monthly (cumulative): month within band 1, and a band-crossing month", () => {
   assert.equal(ndflMonthly({ ytdBaseBefore: 0, monthBase: 100_000 }), 13_000);
   // crossing the 2.4M edge: 50k taxed at 13% + 50k at 15% = 6 500 + 7 500
