@@ -1,4 +1,4 @@
-# Official sources — RF fiscal rules (as of 2026-06-06)
+# Official sources — RF fiscal rules (as of 2026-06-07)
 
 Every rate/threshold encoded in `src/` traces to a primary or authoritative source below.
 **Rate-driven rules change annually** — re-confirm against the cited law before each tax year.
@@ -15,6 +15,18 @@ Every rate/threshold encoded in `src/` traces to a primary or authoritative sour
 
 ## Money (`money.js`)
 - RUB minor unit = копейка (2 decimals). Tax bases round to whole rubles — **НК РФ ст. 52**.
+
+## Regions (`regions.js`) — stable, standard-defined
+- Federal subjects keyed on **ISO 3166-2:RU** (the internationally-recognized set, **83
+  subjects**): 2 cities of federal significance, 21 republics, 9 krais, 46 oblasts, 1
+  autonomous oblast, 4 autonomous okrugs. Neutral, machine-checkable identifiers; subjects
+  outside the international standard are intentionally excluded (territorial-claim neutrality).
+- Administrative centres reflect current status (e.g. Ленинградская обл. → Гатчина since 2021;
+  Ингушетия → Магас; Московская обл. → Красногорск).
+
+## Phone (`phone.js`) — stable, numbering-plan invariant
+- Country code **+7**, 10-digit NSN (НСН), domestic trunk prefix **8**. Validates the stable
+  invariant (10 digits, leading 3–9; mobile 9XX) rather than volatile operator prefixes.
 
 ## VAT (`vat.js`) — 2026
 - Base rate **22%** (reduced 10%, 0% export); УСН special **5%/7%**. ФНС «Налоги 2026»
@@ -33,13 +45,21 @@ Every rate/threshold encoded in `src/` traces to a primary or authoritative sour
 - **МСП** reduced tariff: 30% up to **1.5×МРОТ (40 639,50 ₽)** monthly, 15% above —
   **ФЗ № 425-ФЗ от 28.11.2025**, НК РФ ст. 427 (effective 2026-01-01).
 
-## E-invoice (roadmap, `einvoice.js`)
+## E-invoice (`einvoice.js`) — ✅ shipped
 - Format **5.03**, Приказ ФНС **№ ЕД-7-26/970@** (XSD public on nalog.gov.ru,
   file class `ON_NSCHFDOPPR`). Must transit a licensed оператор ЭДО; КЭП = GOST
-  qualified e-signature (63-ФЗ). Build with injectable `IEdoOperator` + `IKepSigner` seams.
+  qualified e-signature (63-ФЗ). Shipped as a structural XML builder + fail-closed
+  validator; `IEdoOperator` (transport) + `IKepSigner` (КЭП) are documented seams,
+  NOT implemented — the caller maps the output to the official `ON_NSCHFDOPPR` XSD
+  and signs/submits via a licensed operator. Issued НДС rates 2026: 0 / 10 / 22%.
 
-## Chart of accounts (roadmap, `chartOfAccounts.js`)
-- **План счетов**, Приказ Минфина РФ **№ 94н от 31.10.2000** (~99 synthetic accounts, 8 sections).
+## Chart of accounts (`chartOfAccounts.js`) — ✅ shipped
+- **План счетов**, Приказ Минфина РФ **№ 94н от 31.10.2000**: **62 synthetic
+  (first-order) accounts + 11 off-balance (забалансовые 001–011) = 73**, across 8
+  balance-sheet sections (разделы I–VIII). Per-account character (активный / пассивный /
+  активно-пассивный) drives `normalBalance`. Synthetic level only — субсчета and
+  entity-optional accounts are out of scope. Reserved gaps (06,12,13,17,18,22,24,27,
+  30–39,47,48,53,54,56,61,64,65,72,74,78,85,87–89,92,93,95) are intentionally absent.
 
 ## ⚠️ Known seams — NOT modeled / needs primary-source confirmation
 - **МСП eligibility** (priority-ОКВЭД per Распоряжение № 4125-р + the 70%-of-income test
