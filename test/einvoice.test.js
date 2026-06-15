@@ -214,6 +214,10 @@ test("validateEInvoice: missing/invalid date", () => {
   const inv2 = validInvoice();
   inv2.date = "15.03.2026"; // not ISO
   assert.ok(codes(validateEInvoice(inv2)).includes("INVALID_DATE"));
+
+  const inv3 = validInvoice();
+  inv3.date = "2026-99-99"; // ISO-shaped but impossible
+  assert.ok(codes(validateEInvoice(inv3)).includes("INVALID_DATE"));
 });
 
 test("validateEInvoice: missing seller name", () => {
@@ -242,6 +246,12 @@ test("validateEInvoice: bad buyer ИНН", () => {
   assert.ok(codes(validateEInvoice(inv)).includes("INVALID_BUYER_INN"));
 });
 
+test("validateEInvoice: missing buyer name", () => {
+  const inv = validInvoice();
+  delete inv.buyer.name;
+  assert.ok(codes(validateEInvoice(inv)).includes("MISSING_BUYER_NAME"));
+});
+
 test("validateEInvoice: buyer ИП (12-digit ИНН, no КПП) is valid", () => {
   const inv = validInvoice();
   inv.buyer.inn = "500100732259"; // valid 12-digit individual ИНН
@@ -264,6 +274,21 @@ test("validateEInvoice: vatRate 20 not allowed in 2026", () => {
   const res = validateEInvoice(inv);
   assert.equal(res.ok, false);
   assert.ok(codes(res).includes("INVALID_LINE_VAT_RATE"));
+});
+
+test("validateEInvoice: back-dated 2025 invoices allow the 20% rate", () => {
+  const inv = validInvoice();
+  inv.date = "2025-12-31";
+  inv.lines[0].vatRate = 20;
+  const res = validateEInvoice(inv);
+  assert.equal(res.ok, true);
+});
+
+test("validateEInvoice: non-RUB invoices require a numeric currency code", () => {
+  const inv = validInvoice();
+  inv.currency = "USD";
+  delete inv.currencyCode;
+  assert.ok(codes(validateEInvoice(inv)).includes("MISSING_CURRENCY_CODE"));
 });
 
 test("validateEInvoice: empty lines", () => {
@@ -303,6 +328,15 @@ test("validateEInvoice: VAT within 1 ruble of expected is accepted", () => {
   inv.lines[0].vatAmount = 220.5; // expected 220, within 1 ruble
   const res = validateEInvoice(inv);
   assert.equal(res.ok, true);
+});
+
+test("validateEInvoice: lineTotal must match net plus VAT", () => {
+  const inv = validInvoice();
+  inv.lines[0].vatAmount = 220;
+  inv.lines[0].lineTotal = 1;
+  const res = validateEInvoice(inv);
+  assert.equal(res.ok, false);
+  assert.ok(codes(res).includes("LINE_TOTAL_MISMATCH"));
 });
 
 test("validateEInvoice: error objects carry field/code/message", () => {
