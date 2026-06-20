@@ -1,0 +1,43 @@
+{
+  "id": "vat-einvoice-contract",
+  "productName": "Armosphera A1 Localization RU VAT and e-invoice engine",
+  "runTag": "2026-06-20-vat-einvoice-contract",
+  "branchPrefix": "karpathy/",
+  "editableFiles": [
+    "src/vat.js",
+    "src/einvoice.js"
+  ],
+  "readOnlyFiles": [
+    "scripts/check-vat-einvoice-contract.mjs",
+    "test/vat.test.js",
+    "test/einvoice.test.js"
+  ],
+  "contextFiles": [
+    "README.md",
+    "src/money.js",
+    "src/inn.js",
+    "src/vat.js",
+    "src/einvoice.js"
+  ],
+  "guardrails": [
+    "Keep the 2026 general VAT issue rates at 0%, 10%, and 22%, with 2025 20% retained only for back-dated documents.",
+    "Keep VAT settlement math rounded to RUB kopecks and avoid floating-point drift in e-invoice totals.",
+    "Keep validateEInvoice fail-closed with structured field/code/message errors and no thrown exceptions on malformed input.",
+    "Do not add network, filesystem, environment, ЭДО transport, or КЭП signing behavior to the pure localization engines.",
+    "Do not change official format/seam comments or rate-year behavior without updating primary-source citations and focused tests."
+  ],
+  "eval": {
+    "command": "node",
+    "args": [
+      "scripts/check-vat-einvoice-contract.mjs"
+    ],
+    "metric": {
+      "name": "failing_checks",
+      "direction": "minimize"
+    },
+    "successMetricValue": 0,
+    "failureMetricValue": 1,
+    "timeBudgetMinutes": 5,
+    "timeoutMinutes": 10
+  }
+}
