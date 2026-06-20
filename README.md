@@ -71,3 +71,18 @@ npm test
 Pure-function unit tests via the Node built-in runner (capped concurrency to stay light
 on constrained machines). No server, no database, no network. Identifier checksums are
 tested against **real registry numbers** (e.g. ИНН `7707083893`, ОГРН `1027700132195`).
+
+## Karpathy evals
+
+This repo can run A1 product-research eval lanes through the shared
+`../../A1-AI-Core` runner in the local Armosphera workspace:
+
+```
+node scripts/karpathy-eval.mjs --list
+node scripts/karpathy-eval.mjs --program vat-einvoice-contract
+node scripts/karpathy-eval.mjs --run vat-einvoice-contract
+```
+
+The `vat-einvoice-contract` lane verifies the Russian VAT and e-invoice engines:
+2026 issue rates, 2025 back-dated rate behavior, settlement math, kopeck totals,
+fail-closed invoice validation, and the no-I/O transport/signing seam.
