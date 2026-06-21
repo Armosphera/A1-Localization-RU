@@ -10,6 +10,7 @@ on:
 
 jobs:
   analyze:
+    if: false  # disabled 2026-06-21 — repo is private, local CI in ~/dev/armosphera/
     name: Analyze (${{ matrix.language }})
     runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
     permissions:
