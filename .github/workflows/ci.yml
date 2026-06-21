@@ -1,0 +1,50 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test (node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['18', '20', '22']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install (no runtime deps, no lockfile)
+        run: npm install --no-audit --no-fund --omit=optional
+
+      - name: Run tests
+        run: npm test
+
+      - name: Verify tests touched every public module
+        run: |
+          # Sanity check: each src/*.js file should be required by at least one test.
+          missing=""
+          for src in src/*.js; do
+            base=$(basename "$src")
+            if ! grep -rl "require.*${base%.js}" test/ >/dev/null 2>&1; then
+              missing="$missing $base"
+            fi
+          done
+          if [ -n "$missing" ]; then
+            echo "ERROR: these src modules have no test coverage: $missing"
+            exit 1
+          fi
+          echo "All public modules are covered by tests."
