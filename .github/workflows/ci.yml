@@ -31,7 +31,14 @@ jobs:
         run: npm install --no-audit --no-fund --omit=optional
 
       - name: Run tests
-        run: npm test
+        run: |
+          # `node --test --test-timeout` requires Node 20+. Engines >=18 advertised
+          # in package.json, so guard the flag and fall back to the no-flag form on Node 18.
+          if node -e "process.exit(parseInt(process.versions.node) >= 20 ? 0 : 1)"; then
+            npm test
+          else
+            node --test --test-concurrency=4
+          fi
 
       - name: Verify tests touched every public module
         run: |
