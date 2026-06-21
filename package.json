@@ -1,7 +1,7 @@
 {
   "name": "a1-localization-ru",
   "version": "0.1.0",
-  "description": "Russian (RF) localization + fiscal engines — ИНН/ОГРН identifiers, RUB money, chart of accounts (Приказ 94н), НДС, НДФЛ + страховые взносы payroll, e-invoice. Zero runtime dependencies.",
+  "description": "Russian (RF) localization + fiscal engines. Source-available — consumed by vendoring (copy index.js + src/ into vendor/). Not on npm by design (local-first / self-hostable posture).",
   "main": "index.js",
   "scripts": {
     "test": "node --test --test-concurrency=4 --test-timeout=60000"
@@ -30,5 +30,17 @@
     "node": ">=18"
   },
   "license": "UNLICENSED",
-  "private": true
+  "private": true,
+  "publishConfig": {
+    "access": "restricted",
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Armosphera/A1-Localization-RU.git"
+  },
+  "homepage": "https://github.com/Armosphera/A1-Localization-RU#readme",
+  "bugs": {
+    "url": "https://github.com/Armosphera/A1-Localization-RU/issues"
+  }
 }
