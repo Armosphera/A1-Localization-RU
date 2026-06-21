@@ -5,7 +5,7 @@ dependency-free JavaScript modules that encode RF-specific correctness:
 taxpayer/registration IDs, the ruble, the chart of accounts, VAT (НДС),
 payroll (НДФЛ + страховые взносы), and e-invoicing (УПД).
 
-Sibling to [`a1-localization-am`](https://github.com/SamStep74/A1-Localization-AM)
+Sibling to [`a1-localization-am`](https://github.com/Armosphera/A1-Localization-AM)
 (Armenia). This is the single source of truth for RF fiscal logic, consumed by the
 **Russian-market configuration of A1 Suite** by vendoring (copy `index.js` + `src/`,
 require by relative path — see [INTEGRATION.md](./INTEGRATION.md) once published).
