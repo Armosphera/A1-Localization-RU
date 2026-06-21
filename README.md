@@ -98,6 +98,7 @@ PWAs, and the per-engine re-export shim pattern).
 | `chartOfAccounts.js` | План счетов (94н): `STANDARD_ACCOUNTS` (73), `SECTIONS`, `accountByCode`, `accountsBySection`, `accountsByNature`, `sectionOf`, `normalBalance`, `isValidAccountCode`. |
 | `regions.js` | Федеральные субъекты (ISO 3166-2:RU, 83): `REGIONS`, `REGION_CODES`, `regionByCode`, `isValidRegionCode`, `findRegion`, `citiesForRegion`. |
 | `phone.js` | Телефоны РФ (+7): `normalizeNsn`, `isValidRussianPhone`, `e164`, `formatPhone` ("+7 (XXX) XXX-XX-XX"). |
+| `pension_ru.js` | Пенсионные взносы (НК РФ ст. 425, 2026): `pensionBaseAnnual`, `pensionSplitFor2026`, `pensionEmployerMonthly`, `pensionEmployeeMonthly`. Whole-ruble rounding per ст. 52. |
 | `einvoice.js` | УПД / счёт-фактура: `normalizeLine`, `eInvoiceTotals`, `buildEInvoiceXml`, `validateEInvoice` (fail-closed); RUB kopeck amounts; ЭДО/КЭП seams. |
 
 ## Testing

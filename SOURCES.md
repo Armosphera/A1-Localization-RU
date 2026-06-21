@@ -61,6 +61,17 @@ Every rate/threshold encoded in `src/` traces to a primary or authoritative sour
   entity-optional accounts are out of scope. Reserved gaps (06,12,13,17,18,22,24,27,
   30–39,47,48,53,54,56,61,64,65,72,74,78,85,87–89,92,93,95) are intentionally absent.
 
+## Pension contributions (`pension_ru.js`) — ✅ shipped (v0.2.0)
+- **Пенсионные взносы**, per **НК РФ ст. 425–430** (effective 2026-01-01 via ФЗ № 425-ФЗ от 28.11.2025):
+  - **Within annual ceiling** (≤ 2_500_000 ₽/year): unified 30% employer split as
+    22% pension + 5.1% medical + 2.9% social. Employee rate = 0% (since 2023 reform,
+    ФЗ № 306-ФЗ от 24.07.2023).
+  - **Above ceiling**: 15.1% employer split as 0.1% pension + 0% medical + 15% social.
+- Functions: `pensionBaseAnnual`, `pensionSplitFor2026`, `pensionEmployerMonthly`,
+  `pensionEmployeeMonthly`. All Math.round per НК РФ ст. 52 (whole-ruble rounding).
+- Cross-ceiling month handled correctly (e.g. Nov pay: 100k within, 100k above).
+- Laws cited inline: НК РФ ст. 425-430, ФЗ № 167-ФЗ, ФЗ № 400-ФЗ, ФЗ № 425-ФЗ.
+
 ## ⚠️ Known seams — NOT modeled / needs primary-source confirmation
 - **МСП eligibility** (priority-ОКВЭД per Распоряжение № 4125-р + the 70%-of-income test
   + revenue ceiling): out of `payroll.js` scope — pass `sme:true` only for an already-qualified
