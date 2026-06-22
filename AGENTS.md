@@ -1,116 +1,138 @@
-# AGENTS.md — A1-portfolio (cross-repo documentation)
+# AGENTS.md — A1-Localization-RU (Russian fiscal engines)
 
-This file applies to every agent (human or AI) that touches the `armosphera/A1-portfolio`
-repository. It extends, and never weakens, the global rules in this same repo's
-`LICENSING.md`, `ARCHITECTURE.md`, and `SECURITY.md`.
+This file applies to every agent (human or AI) that touches the
+`armosphera/A1-Localization-RU` repository. It extends, and never weakens, the global
+rules in `https://github.com/Armosphera/A1-portfolio/blob/main/LICENSING.md`.
 
-## 1. What this repo is — and isn't
+## 1. What this repo is
 
-`A1-portfolio` is the **cross-repo documentation source of truth** for the entire A1
-product family. It contains:
+`a1-localization-ru` is the **Russian Federation (RF) localization + fiscal engines** —
+the single source of truth for RF fiscal logic across the entire A1 product family:
 
-- `README.md` — repo index grouped by layer (Engine / Application / Reference)
-- `LICENSING.md` — license matrix across all 9 repos
-- `ARCHITECTURE.md` — layer cake, data flow, open portfolio questions
-- `SECURITY.md` — vulnerability reporting, severity SLAs
+- ИНН (10/12) / КПП / ОГРН / ОГРНИП / СНИЛС validation (mod-11/mod-101 checksums
+  verified against real registry numbers)
+- RUB money round/format/parse (копейки)
+- НДС (2026 rates: base 22%, reduced 10%, 0%; УСН 5%/7%)
+- НДФЛ 5-band progressive (cumulative annual base) + страховые взносы
+  (единый тариф / ЕПВБ / МСП, 2026)
+- План счетов (Приказ Минфина 94н; 62 synthetic + 11 off-balance = 73 accounts)
+- ISO 3166-2:RU regions (83 subjects)
+- УПД / electronic счёт-фактура (формат 5.03; ЭДО/КЭП seams)
 
-**This repo has no code, no tests, no CI.** It's documentation. Edits here are edits
-to the *portfolio* — they ripple by being read by humans and agents in every other repo.
+**This is regulatory territory. Wrong numbers are tax liabilities.**
 
-## 2. When to edit this repo
+## 2. Source-available, NOT on npm
 
-Touch this repo whenever:
+Consumed via **vendoring** (copy `index.js` + `src/` into a `vendor/a1-localization-ru/`
+directory). Recipe in `INTEGRATION.md`. `package.json` has `"private": true` and a
+`publishConfig.registry` pointing at GitHub Packages (org-private) — never override to
+public npm.
 
-1. You add a new A1 repo → update the **Repo index** in `README.md` and the layer cake
-   in `ARCHITECTURE.md`.
-2. You change a license in any repo → update the matrix in `LICENSING.md`. (Per the
-   file's preamble: "If a repo's `LICENSE` file disagrees with this document, the
-   `LICENSE` file wins — but please open an issue so we can resolve the drift.")
-3. You introduce a new cross-repo invariant (e.g. a new pinned SHA, a new eval lane
-   contract, a new sovereignty constraint) → document it in `ARCHITECTURE.md` and link
-   from `SECURITY.md` if it touches security posture.
-4. You change release / tagging convention → update `docs/RELEASE-PROCESS.md` (TODO —
-   does not exist yet).
-5. You change which repo is canonical for a domain → update `docs/PRODUCTS.md` (TODO).
+**Never edit a vendored copy in place.** Fix upstream here, then re-vendor.
 
-## 3. The 4 files you must keep coherent
+## 3. Workflow — Test-Driven Development (TDD)
 
-These are the load-bearing docs. **All four must agree on the canonical repo list.**
+**Mandatory for every non-trivial change.**
 
-- `README.md` — repo index
-- `LICENSING.md` — license matrix table
-- `ARCHITECTURE.md` — layer cake (must show the same repos)
-- `SECURITY.md` — supported versions table
+1. Write the test first (RED) in `test/<name>.test.js`. Use real RF registry numbers
+   (e.g. ИНН `7707083893`, ОГРН `1027700132195`) — never synthetic.
+2. Run `npm test` and confirm it fails for the right reason.
+3. Write the minimum implementation in `src/<name>.js` (GREEN).
+4. Re-export from `index.js`.
+5. Run `npm test` and confirm green.
+6. Update README module table.
+7. Commit with conventional prefix.
 
-If you add a repo, edit all 4. If you deprecate a repo, edit all 4 + open an issue.
+## 4. The 2 files you must NOT edit
 
-## 4. Conventional Commits
+- **`src/money.js` rounding rules** — НК РФ ст. 52 mandates whole-ruble rounding for
+  tax bases. Any change here breaks every downstream consumer's tax math.
+- **`*.data.js`** — pure data tables (regions, chart of accounts). Auto-regenerated.
+
+## 5. Coverage Floor — 80%
+
+- Unit tests in `test/` (`node --test`), measured per touched module.
+- CI runs across Node 18, 20, 22 (matrix in `.github/workflows/ci.yml`).
+- Coverage check: every non-`*.data.js` `src/*.js` must have a corresponding test file
+  (enforced by CI guard).
+
+## 6. Conventional Commits
 
 ```
 <type>(<scope>): <description>
 
-<optional body>
+<optional body> — must cite the regulatory source if touching fiscal logic
 ```
 
-Allowed types: `docs`, `chore`, `feat` (for new docs sections), `fix` (typos /
-wrong claims), `refactor` (restructuring existing docs).
+Allowed types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `ci`, `build`.
 
 - Subject line ≤72 chars, imperative mood, no trailing period.
-- Body explains **why**, not **what** (the diff shows the what).
+- Body explains **why**, and **cites the official source** (e.g. "НК РФ ст. 52",
+  "Приказ Минфина 94н", "ФНС письмо № …") when touching rates, deductions, or
+  chart-of-accounts structure.
 
-## 5. No Code, No Secrets
+## 7. No Hardcoded Secrets
 
-- This repo has no source code, no tests, no CI. **Don't add any.**
-- No secrets, no API keys, no customer data. If you find one in a PR, reject and rotate.
+- API keys, customer data, real taxpayer IDs (other than published test fixtures)
+  must never appear in source or tests.
+- Public test fixtures (e.g. government-published sample numbers) are OK with citation.
 
-## 6. Markdown Discipline
+## 8. Porting over Net-New Invention
 
-- One H1 per file. Use H2 for sections, H3 for subsections.
-- Code blocks must specify language: ` ```bash `, ` ```js `, ` ```python `, etc.
-- Tables use GitHub-flavored markdown alignment (left for text, right for numbers).
-- Internal links use relative paths (`./LICENSING.md`), external links use full URLs.
-- Line length ≤120 chars (Markdown doesn't hard-wrap but keep readable in raw view).
+`src/` modules are pure ports from official RF publications (НК РФ, Приказы Минфина/ФНС,
+ФНС/ЦБ РФ specs). **Before** writing a new fiscal engine, search the relevant
+publication. Cite it in the commit body. If the rule is ambiguous or unconfirmed from
+a primary source, **leave it as an explicit, documented seam** (see README "Known
+seams") — never guess.
 
-## 7. Drift Detection (TODO)
+## 9. Files, Functions, Nesting
 
-This repo should grow a CI check that:
+- One concept per file. Pure functions only — no I/O, no network, no filesystem.
+- Functions: <50 lines, single responsibility.
+- No nesting deeper than 4 levels. Prefer early returns.
 
-- Compares the repo index in `README.md` against the actual list of repos in the
-  `armosphera` org.
-- Compares the license matrix in `LICENSING.md` against each repo's `LICENSE` file.
-- Compares the architecture layer cake in `ARCHITECTURE.md` against the actual repo
-  descriptions.
+## 10. JavaScript Discipline
 
-Add as a Karpathy eval lane: `portfolio-drift-contract`.
+- Zero runtime dependencies. CommonJS.
+- Node ≥ 18 (engines in `package.json`). CI runs across node 18/20/22.
+- Test runner: `node --test --test-concurrency=4 [--test-timeout=60000]` (the
+  `--test-timeout` flag is Node 20+ only; CI guards).
+- No TypeScript, no transpilation. Plain ES2022 + CommonJS.
 
-## 8. Day-One Checklist
+## 11. No Debug Noise in Shipped Code
+
+- `console.log` is for development only.
+- No commented-out code in PRs.
+
+## 12. Local-First, Offline-Capable
+
+This repo runs in a sovereign context — every downstream consumer is air-gapped.
+
+- No outbound network calls at runtime.
+- No telemetry, no auto-update checks.
+- All fixtures are real public-record numbers.
+
+## 13. Question Before Damage
+
+If an instruction is ambiguous and a wrong move would publish wrong tax rates, break
+2+ consumer apps, or rewrite a lot of working code, **ask first**. Otherwise, prefer
+momentum: small, reversible, well-tested steps.
+
+## 14. Day-One Checklist
 
 ```
 1. cat AGENTS.md             # this file
-2. cat README.md             # current repo index
-3. cat LICENSING.md          # current license matrix
-4. cat ARCHITECTURE.md       # current layer cake
-5. cat SECURITY.md           # current policy
-6. Now edit — keep all 4 in sync.
+2. cat README.md             # install + quick start
+3. cat INTEGRATION.md        # vendor recipe (consumers read this)
+4. cat SOURCES.md            # regulatory citations
+5. ls src/                   # note *.data.js is auto-generated
+6. npm install && npm test   # confirm baseline green
+7. Now edit.
 ```
 
-## 9. Roadmap Items (Track Here)
-
-The following are **known portfolio gaps** that this repo will track:
-
-- [ ] `docs/CONTRIBUTING.md` — how to file issues against the right repo
-- [ ] `docs/RELEASE-PROCESS.md` — how releases are cut (tag, notes, publishing)
-- [ ] `docs/PRODUCTS.md` — naming matrix: which repo is canonical for X
-- [ ] AGPL-3.0 dual-license migration for engines (2026 H2)
-- [ ] Portfolio drift CI (drift between docs and actual repos)
-- [ ] Cross-repo evaluation report (which repos have AGENTS.md, program.md,
-      .orchestration/, Karpathy eval lanes — vs which don't)
-
-## 10. Ownership
-
-**Armosphera LLC** · contact: ops@a1-suite.local · security: ops@a1-suite.local
+If `npm test` baseline fails on a fresh clone: STOP, file an issue.
 
 ---
 
-*Adapted from `armosphera/SBOS-A1-ERP/AGENTS.md`. Specializes for "this repo IS the
-documentation." License: Proprietary (`LicenseRef-Armosphera-Proprietary`). See `LICENSE`.*
+*Adapted from `armosphera/SBOS-A1-ERP/AGENTS.md`. Sibling: `A1-Localization-AM`.*
+*License: Proprietary (`LicenseRef-Armosphera-Proprietary`). See `LICENSE`.*
