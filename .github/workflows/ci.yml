@@ -56,3 +56,21 @@ jobs:
             exit 1
           fi
           echo "All public modules are covered by tests."
+  pension-ru-ceiling-crossing:
+    if: false  # disabled 2026-06-21 — repo is private, local CI in ~/dev/armosphera/
+    name: "Karpathy eval: pension-ru-ceiling-crossing"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install
+        run: npm install --no-audit --no-fund --omit=optional
+
+      - name: Run pension-ru-ceiling-crossing lane
+        run: node evals/karpathy/pension-ru-ceiling-crossing/check.js

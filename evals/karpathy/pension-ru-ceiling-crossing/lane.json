@@ -1,0 +1,28 @@
+{
+  "name": "pension-ru-ceiling-crossing",
+  "version": "1.0.0",
+  "module": "src/pension_ru.js",
+  "exports_required": ["PENSION_2026", "pensionEmployerMonthly", "pensionEmployeeMonthly", "pensionSplitFor2026"],
+  "behaviors": [
+    "PENSION_2026 constants: EMPLOYER_RATE_PENSION=22, EMPLOYER_RATE_MEDICAL=5.1, EMPLOYER_RATE_SOCIAL=2.9 (within ceiling)",
+    "PENSION_2026 above-ceiling rates: PENSION=0.1, MEDICAL=0, SOCIAL=15 (above ceiling)",
+    "Within-ceiling sum = 30% (22 + 5.1 + 2.9)",
+    "Above-ceiling sum = 15.1% (0.1 + 0 + 15)",
+    "EMPLOYEE_TOTAL = 0 (post-2023 reform per ФЗ № 306-ФЗ от 24.07.2023)",
+    "DEFAULT_ANNUAL_CEILING_RUB = 2,500,000 (per ФЗ № 425-ФЗ effective 2026-01-01)",
+    "pensionSplitFor2026: within (1M) → pension=220000, medical=51000, social=29000, aboveCeiling=false",
+    "pensionSplitFor2026: above (10M) → pension=557500, medical=127500, social=1197500, aboveCeiling=true",
+    "pensionSplitFor2026: at exact ceiling (2.5M) → aboveCeiling=false (boundary is inclusive)",
+    "pensionSplitFor2026: just over (2.5M+1) → aboveCeiling=true, aboveCeilingAmount=1",
+    "pensionEmployerMonthly: full within (200k) → pension=44000, totalEmployer=60000",
+    "pensionEmployerMonthly: full above (10M) → within=2.5M, above=7.5M, pension=557500",
+    "pensionEmployerMonthly: cross-ceiling (200k @ 2.4M YTD) → within=100k, above=100k, pension=22100",
+    "pensionEmployerMonthly: Math.round per ст. 52 (100,001 → pension=22000, not 22000.22)",
+    "pensionEmployeeMonthly: always 0% (post-2023 reform)",
+    "pension_ru.js has NO network require (sovereign/offline-capable)",
+    "pension_ru.js has NO fs require (pure functions only)"
+  ],
+  "frozen_as_of": "2026-06-22",
+  "rationale": "Wrong numbers = tax liabilities. Cross-ceiling month math + rates per НК РФ ст. 425-430 + ФЗ № 425-ФЗ.",
+  "consumers": ["A1-Suite-Local-ANT (vendored)", "A1-Suite-Local-MAX (vendored)", "A1-AI-ERP-SBOS-MSTUDIO-sovereign (vendored)", "SBOS-A1-ERP (vendored)"]
+}
