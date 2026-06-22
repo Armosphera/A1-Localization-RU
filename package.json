@@ -4,7 +4,10 @@
   "description": "Russian (RF) localization + fiscal engines. Source-available — consumed by vendoring (copy index.js + src/ into vendor/). Not on npm by design (local-first / self-hostable posture).",
   "main": "index.js",
   "scripts": {
-    "test": "node --test --test-concurrency=4 --test-timeout=60000"
+    "test": "node --test --test-concurrency=4 --test-timeout=60000",
+    "karpathy:list": "node scripts/karpathy-eval.mjs --list",
+    "karpathy:program": "node scripts/karpathy-eval.mjs --program",
+    "karpathy:run": "node scripts/karpathy-eval.mjs --run"
   },
   "files": [
     "index.js",
@@ -28,6 +31,9 @@
   ],
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "@a1/ai": "https://github.com/Armosphera/A1-AI-Core/archive/f6c57a2c0ba0ceca7a6de880f03ed05a305bab5d.tar.gz"
   },
   "license": "UNLICENSED",
   "private": true,
