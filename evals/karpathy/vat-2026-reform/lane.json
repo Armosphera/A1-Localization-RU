@@ -1,0 +1,31 @@
+{
+  "name": "vat-2026-reform",
+  "version": "1.0.0",
+  "module": "src/vat.js + src/pension_ru.js",
+  "exports_required": [
+    "VAT_RATES (2025, 2026)",
+    "CURRENT_YEAR (2026)",
+    "PENSION_2026 (all 13 rate constants)"
+  ],
+  "behaviors": [
+    "VAT_RATES.2026.standard = 22 (post-reform, ФЗ № 425-ФЗ)",
+    "VAT_RATES.2026.reduced = 10 (unchanged)",
+    "VAT_RATES.2026.zero = 0 (unchanged)",
+    "VAT_RATES.2025.standard = 20 (pre-reform, back-dated docs)",
+    "VAT_RATES.2026.usnLow = 5 (УСН income)",
+    "VAT_RATES.2026.usnHigh = 7 (УСН income-expenses)",
+    "PENSION_2026.EMPLOYER_RATE_PENSION = 22",
+    "PENSION_2026.EMPLOYER_RATE_MEDICAL = 5.1",
+    "PENSION_2026.EMPLOYER_RATE_SOCIAL = 2.9",
+    "PENSION_2026.EMPLOYER_TOTAL_WITHIN_CEILING = 30 (22 + 5.1 + 2.9)",
+    "PENSION_2026.EMPLOYER_RATE_ABOVE_CEILING_PENSION = 0.1",
+    "PENSION_2026.EMPLOYER_RATE_ABOVE_CEILING_MEDICAL = 0",
+    "PENSION_2026.EMPLOYER_RATE_ABOVE_CEILING_SOCIAL = 15",
+    "PENSION_2026.EMPLOYER_TOTAL_ABOVE_CEILING = 15.1 (0.1 + 0 + 15)",
+    "PENSION_2026.EMPLOYEE_TOTAL = 0 (post-2023 reform)",
+    "PENSION_2026.DEFAULT_ANNUAL_CEILING_RUB = 2,500,000",
+    "Math.round() used >=3 times (НК РФ ст. 52 kopecks rounding)"
+  ],
+  "frozen_as_of": "2026-06-22",
+  "rationale": "2026 tax reform per ФЗ № 425-ФЗ. Any drift = tax liability."
+}
